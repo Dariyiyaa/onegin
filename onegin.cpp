@@ -1,100 +1,70 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <sys/stat.h>
 
-
-int  ReadFile(const char* name, char* index[1000]);
-int  PrintFile(char* index[1000], int nlines);
-void PrintString(char* index);
-void SortStrings(char* index[1000], int nlines);
-// void SwitchIndex(char** index1, char** index2);
-// void SortStringsBackward(char* index[1000], int nlines);
+int  IndexCount(char* file);
+int  PrintFile(char** index, int nlines);
+void PrintString(FILE* file, char* index);
+int  ReadFile(FILE* name, char* text, char** index);
 int  AlfavetComper(const void* a, const void* b);
 int  AlfavetBackwardComper(const void* a, const void* b);
-void Free(char** index, int nlines);
 
-int IndexCount(char* name)
+int IndexCount(char* file)
 {
-    FILE* file = fopen(name, "r");
-    int i = 0;
-    while (getc(file) != EOF)
-    {
-        i++;
-    }
+    struct stat buff;
+    stat(file, &buff);
 
-    return i;
-    fclose(file);
+    return buff.st_size;
 }
 
-int ReadFile(const char* name, char** index)
+int ReadFile(FILE* file, char* text, char** index)
 {
-    FILE* file = fopen(name, "r");
-    int i = 0;
-    char buffer[1000] = {};
+    int i = 0, j = 0;
+    int c = 0;
 
-    while (fgets(buffer, 1000, file) != NULL)
+    while((c = getc(file)) != EOF)
     {
-        index[i] = (char*)calloc(strlen(buffer) + 1, sizeof(char));
-        strcpy(index[i], buffer);
+        text[i] = (char)c;
+
+        if ((char)c == '\n')
+        {
+            index[j] = text + i + 1;
+            j++;
+        } 
         i++;
     }
 
-    fclose(file);
-
-    return i;
+    return j;
 }
 
-void PrintString(char* index)
+void PrintString(FILE* file, char* index)
 {
     int i = 0;
-    while (*(index + i) != '\0')
+
+    while ((*(index + i) != '\n') && (*(index + i) != '\0'))
     {
-        printf("%c", *(index + i));
+        putc(*(index + i), file);
         i++;
     }
-    // printf("%c", '\n');
+    
+    putc('\n', file);
     
     return;
 }
 
 int PrintFile(char** index, int nlines)
 {
-    for (int i = 0; i < nlines; i ++)
-    {
-        PrintString(index[i]);
-    }
+    FILE* file = fopen("output.txt", "w");
 
-    printf("%c", '\n');
+    for (int i = 0; i < nlines; i++)
+    {
+        PrintString(file, index[i]);
+    }
+    
     return 0;
 }
-
-// void SwitchIndex(char** index1, char** index2)
-// {
-//     char* temp = *index1;
-//     *index1 = *index2;
-//     *index2 = temp;
-
-//     return;
-// }
-
-
-
-// void SortStrings(char** index, int nlines)
-// {
-//     for (int i = 0; i < nlines; i ++)
-//     {
-//         for (int j = 1; j < nlines - i; j ++)
-//         {
-//             if (strcmp(index[j-1], index[j]) > 0)
-//             {
-//                 SwitchIndex(&index[j-1], &index[j]);
-//             }
-//         }
-//     }
-
-//     return;
-// }
-
 
 int AlfavetComper(const void* a, const void* b)
 {
@@ -108,46 +78,23 @@ int AlfavetBackwardComper(const void* a, const void* b)
 }
 
 
-void Free(char** index, int nlines)
-{
-    for (int i = 0; i < nlines; i ++)
-    {
-        free(index[i]);
-    }
-
-    return;
-}
-
-// void SortStringsBackward(char* index[1000], int nlines)
-// {
-//     for (int i = nlines; i > 0; i--)
-//     {
-//         for (int j = nlines; j > 0; j--)
-//         {
-//             if (strcmp(index[j], index[j-1]) > 0)
-//             {
-//                 SwitchIndex(&index[j-1], &index[j]);
-//             }
-//         }
-//     }
-
-//     return;
-// }
-
-
 int main()
 {   
-    char* index[100] = {};
-    int nlines = IndexCount("smallonegin.txt");
-    ReadFile("smallonegin.txt", index);
+    char path[] = "onegin.txt";
+    FILE* file = fopen(path, "r");
+
+    assert(file);
+
+    int nchar = IndexCount(path);
+
+    char* text = (char*)calloc(nchar, sizeof(size_t));
+    char** index = (char**)calloc(nchar, sizeof(size_t));
+
+    int nlines = ReadFile(file, text, index);
+
 
     PrintFile(index, nlines);
 
-    qsort((void*) index, nlines, sizeof(char*), &AlfavetComper);
-    PrintFile(index, nlines);
 
-    qsort((void*) index, nlines, sizeof(char*), &AlfavetBackwardComper);
-    PrintFile(index, nlines);
-
-    Free(index, nlines);
+    fclose(file);
 }
