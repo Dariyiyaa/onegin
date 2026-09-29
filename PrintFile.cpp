@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void PrintString(FILE* file_ptr, char* lines_ptr);
-int  PrintFile(char** lines_ptr, int nlines);
+void PrintString(FILE* file_ptr, char *const lines_ptr);
+int  PrintFile(char *const *const lines_ptr, const size_t nlines);
 
 
-void PrintString(FILE* file_ptr, char* lines_ptr)
+void PrintString(FILE* const file_ptr, char *const lines_ptr)
 {
     int i = 0;
 
@@ -20,19 +20,16 @@ void PrintString(FILE* file_ptr, char* lines_ptr)
     return;
 }
 
-int PrintFile(char** lines_ptr, int nlines)
+int PrintFile(char *const *const lines_ptr, const size_t nlines)
 {
-    char filename[50] = "";
-    int file_id = rand() % 10;
+    FILE* output = fopen("output.txt", "a");
 
-    sprintf(filename, "output%d.txt", file_id);
-
-    FILE* output = fopen(filename, "w");
-
-    for (int lines_count = 0; lines_count < nlines; lines_count++)
+    for (size_t lines_count = 0; lines_count < nlines; lines_count++)
     {
         PrintString(output, lines_ptr[lines_count]);
     }
+
+    putc('\n', output);
     
     fclose(output);
 

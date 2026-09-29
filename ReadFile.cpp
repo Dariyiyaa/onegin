@@ -5,7 +5,7 @@ int IndexCount(char* file_ptr);
 int ReadFile(FILE* file_ptr, char* text, char** lines_ptr);
 
 
-int IndexCount(char* file_ptr)
+int IndexCount(char *const file_ptr)
 {
     struct stat buff;
     stat(file_ptr, &buff);
@@ -13,10 +13,12 @@ int IndexCount(char* file_ptr)
     return buff.st_size;
 }
 
-int ReadFile(FILE* file_ptr, char* text, char** lines_ptr)
+int ReadFile(FILE *const file_ptr, char* text, char** lines_ptr)
 {
-    int symbol_count = 0, lines_count = 0;
+    int symbol_count = 0, lines_count = 1;
     int symbol = 0;
+
+    lines_ptr[0] = text;
 
     while((symbol = getc(file_ptr)) != EOF)
     {

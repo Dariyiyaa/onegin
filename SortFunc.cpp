@@ -2,16 +2,27 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define COMPARE(s1, s2) if (s1 < s2) return -1; else if (s1 == s2) return 0; else return 1;
 
 int AlfavetComper(const void* symbol1, const void* symbol2);
-int AlfavetBackwardComper(const void* symbol1, const void* symbol2);
+int BackwardComper(const void* symbol1, const void* symbol2);
+int OriginalText(const void* symbol1, const void* symbol2);
 int LenSrt(const char* s);
+
+
+int OriginalText(const void* symbol1, const void* symbol2)
+{
+    const char* s1 = *(char *const *)symbol1;
+    const char* s2 = *(char *const *)symbol2;
+
+    COMPARE(s1, s2)
+}
 
 
 int AlfavetComper(const void* symbol1, const void* symbol2)
 {
-    const char* s1 = *(char*const *)symbol1;
-    const char* s2 = *(char*const *)symbol2;
+    const char* s1 = *(char *const *)symbol1;
+    const char* s2 = *(char *const *)symbol2;
 
     return strcmp(s1, s2);
 }
@@ -27,7 +38,7 @@ int LenSrt(const char* s)
     return len;
 }
 
-int AlfavetBackwardComper(const void* symbol1, const void* symbol2)
+int BackwardComper(const void* symbol1, const void* symbol2)
 {   
     const char* s1 = *(char*const *)symbol1;
     const char* s2 = *(char*const *)symbol2;
