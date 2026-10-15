@@ -15,22 +15,23 @@ int IndexCount(char *const file_ptr)
 
 int ReadFile(FILE *const file_ptr, char* text, char** lines_ptr)
 {
-    int symbol_count = 0, lines_count = 1;
+    int symbol_count = 0, lines_count = 0;
     int symbol = 0;
 
-    lines_ptr[0] = text;
+    int string_start = 0;
 
     while((symbol = getc(file_ptr)) != EOF)
     {
-        text[symbol_count] = (char)symbol;
-        
-        if ((char)symbol == '\n')
-        {
-            lines_ptr[lines_count] = text + symbol_count + 1;
-            lines_count++;
-        }
+        string_start = symbol_count;
 
-        symbol_count++;
+        while ((symbol = getc(file_ptr)) != '\n')
+        {
+            text[symbol_count] = (char)symbol;
+            symbol_count++;
+        }
+        
+        lines_ptr[lines_count] = text + string_start;
+        lines_count++;
     }
 
     return lines_count;

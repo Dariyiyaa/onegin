@@ -2,8 +2,7 @@
 #include <stdlib.h>
 
 void PrintString(FILE* file_ptr, char *const lines_ptr);
-int  PrintFile(char *const *const lines_ptr, const size_t nlines);
-
+int PrintFile(char *const *const lines_ptr, const size_t nlines, FILE* output);
 
 void PrintString(FILE* const file_ptr, char *const lines_ptr)
 {
@@ -20,10 +19,8 @@ void PrintString(FILE* const file_ptr, char *const lines_ptr)
     return;
 }
 
-int PrintFile(char *const *const lines_ptr, const size_t nlines)
+int PrintFile(char *const *const lines_ptr, const size_t nlines, FILE* output)
 {
-    FILE* output = fopen("output.txt", "a");
-
     for (size_t lines_count = 0; lines_count < nlines; lines_count++)
     {
         PrintString(output, lines_ptr[lines_count]);
@@ -31,7 +28,6 @@ int PrintFile(char *const *const lines_ptr, const size_t nlines)
 
     putc('\n', output);
     
-    fclose(output);
 
     return 0;
 }

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#define SORT_AND_PRINT(s) qsort((void*)lines_ptr, nlines, sizeof(char*), &s); PrintFile(lines_ptr, nlines);
+#define SORT_AND_PRINT(s) qsort((void*)lines_ptr, nlines, sizeof(char*), &s); PrintFile(lines_ptr, nlines,output_file_ptr);
 
 #include "ReadFile.cpp"
 #include "PrintFile.cpp"
@@ -10,8 +10,13 @@
 
 int main(int argc, char* argv[])
 {   
-    (void)argc;
-    remove("output.txt");
+    if (argc < 3)
+    {
+       fprintf(stderr, "argc < 3\n"); 
+       return 0;
+    }
+
+    FILE* output_file_ptr = fopen(argv[2], "w");
 
     char* file_name = argv[1];
     FILE* file_ptr   = fopen(file_name, "r");
@@ -25,11 +30,13 @@ int main(int argc, char* argv[])
 
     size_t nlines = ReadFile(file_ptr, text, lines_ptr);
 
-    SORT_AND_PRINT(AlfavetComper)
+    SORT_AND_PRINT(AlfaveticOrder)
 
-    SORT_AND_PRINT(BackwardComper)
+    SORT_AND_PRINT(BackwardOrder)
 
     SORT_AND_PRINT(OriginalText)
 
     fclose(file_ptr);
+    fclose(output_file_ptr);
+
 }
